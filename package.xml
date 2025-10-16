@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>kf_estimator</name>
+  <version>1.0.0</version>
+  <description>Extended Kalman Filter (EKF) state estimator for a wheeled quadruped, including contact scheduling and ODrive joint state adaptation.</description>
+  <maintainer email="user@todo.todo">Your Name</maintainer>
+  <license>TODO: License declaration</license>
+
+  <!-- Build Tool Dependencies -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Message Dependencies (required for building the C++ nodes) -->
+  <depend>rclcpp</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  
+  <!-- Custom Message Dependency for ODrive Controller Status -->
+  <depend>odrive_can</depend>
+
+  <!-- System Library Dependencies (required for building the C++ code) -->
+  <build_depend>Eigen3</build_depend>
+  <build_depend>mujoco</build_depend> 
+  
+  <exec_depend>Eigen3</exec_depend>
+  <exec_depend>mujoco</exec_depend>
+
+  <!-- Test Dependencies -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
