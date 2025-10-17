@@ -236,30 +236,39 @@ void QuadrupedEKF::update(const Eigen::VectorXd& sensor_z, const std::vector<boo
 
 
 
-    // --- START DEBUGGING: PRINT FOOT VELOCITY SENSOR READINGS ---
-    
-    std::cout << "\n----------------- FOOT VELOCITY SENSORS (MEASUREMENTS) -----------------" << std::endl;
-    
-    // Assuming the order of your sensor indices matches the order of your feet (0 to 7)
-    // You should iterate through the sensor indices you stored during initialization
-    
-    for (int i = 0; i < NUM_FEET; ++i) {
-        // Get the starting address of the 3D velocity measurement (Vx, Vy, Vz)
-        int sensor_data_adr = foot_vel_sensor_indices[i];
+    // std::cout << "\n----------------- FOOT VELOCITY SENSORS (MEASUREMENTS) -----------------" << std::endl;
         
-        // Use Eigen::Map to access the data easily
-        Eigen::Map<const Vector3d> measured_foot_vel(
-            &d_ptr->sensordata[sensor_data_adr]
-        );
+    //     // Define the sensor names array in the local scope for a concise output, 
+    //     // ensuring the order matches how you initialized foot_vel_sensor_indices[i].
+    //     const char* foot_sensor_names[NUM_FEET] = {
+    //         "hlf_wheel_vel", "hlr_wheel_vel", "hrf_wheel_vel", "hrr_wheel_vel",
+    //         "tlf_wheel_vel", "tlr_wheel_vel", "trf_wheel_vel", "trr_wheel_vel"
+    //     };
 
-        std::cout << "Foot " << i << " velocity [Vx, Vy, Vz]: " 
-                  << measured_foot_vel.transpose() 
-                  << std::endl;
-    }
-    std::cout << "------------------------------------------------------------------------" << std::endl;
+    //     for (int i = 0; i < NUM_FEET; ++i) {
+    //         // 1. Find the sensor's ID/Index in MuJoCo's sensor list
+    //         // Note: The loop index 'i' corresponds to the index in your local array,
+    //         // which should match the MuJoCo's sensor index if you mapped them sequentially.
+    //         int sensor_id = mj_name2id(m_ptr, mjOBJ_SENSOR, foot_sensor_names[i]);
 
-    // --- END DEBUGGING ---    
+    //         // 2. Get the starting address of the 3D velocity measurement (Vx, Vy, Vz)
+    //         // We use the address stored during initialization.
+    //         int sensor_data_adr = foot_vel_sensor_indices[i];
 
+    //         // 3. Get the actual sensor name from the model for the printout (optional, but good for debugging)
+    //         const char* mu_sensor_name = mj_id2name(m_ptr, mjOBJ_SENSOR, sensor_id);
+            
+    //         // Use Eigen::Map to access the data easily
+    //         Eigen::Map<const Vector3d> measured_foot_vel(
+    //             &d_ptr->sensordata[sensor_data_adr]
+    //         );
+
+    //         // Print the name and the reading
+    //         std::cout << mu_sensor_name << " [Idx: " << i << "] Velocity [Vx, Vy, Vz]: " 
+    //                 << measured_foot_vel.transpose() 
+    //                 << std::endl;
+    //     }
+    //     std::cout << "------------------------------------------------------------------------" << std::endl;
 
 
 
@@ -303,8 +312,18 @@ void QuadrupedEKF::update(const Eigen::VectorXd& sensor_z, const std::vector<boo
     for(int i = 0; i < num_active_feet; ++i) {
         int foot_idx = active_feet_indices[i];
         
+        // --- ADDED DEBUGGING CODE ---
+        // const char* site_name = mj_id2name(m_ptr, mjOBJ_SITE, foot_idx);
+        // if (site_name) {
+        //     std::cout << "DEBUG: Processing active foot - Index in list: " << i 
+        //                 << ", MuJoCo Site ID: " << foot_idx 
+        //                 << ", Name: " << site_name << std::endl;
+        // }
+        // --- END DEBUGGING CODE ---
+        
         mjtNum* jac_vel_ptr = new mjtNum[3 * m_ptr->nv]; 
-        mj_jacSite(m_ptr, d_ptr, NULL, jac_vel_ptr, foot_idx);
+        // mj_jacSite(m_ptr, d_ptr, NULL, jac_vel_ptr, foot_idx);
+        mj_jacSite(m_ptr, d_ptr,  jac_vel_ptr, NULL, foot_idx);
 
         Eigen::Map<MatrixXd> jac_vel(jac_vel_ptr, 3, m_ptr->nv);
         H.block(i*3, 0, 3, m_ptr->nv) = jac_vel;
