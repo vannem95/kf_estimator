@@ -59,7 +59,11 @@ public:
 
     const Eigen::VectorXd& get_state() const {
         return x_;
-    }    
+    }
+
+    int foot_vel_sensor_indices[NUM_FEET]; // Store the starting index in d_ptr->sensordata for each foot's velocity    
+
+
 private:
     VectorXd x_; // State vector
     MatrixXd P_; // Covariance matrix
@@ -73,7 +77,6 @@ private:
     // Mapping for MuJoCo joint data
     std::map<std::string, int> joint_to_qpos_index_map_;
     
-    int foot_vel_sensor_indices[NUM_FEET]; // Store the starting index in d_ptr->sensordata for each foot's velocity    
 };
 
 class EKFNode : public rclcpp::Node {

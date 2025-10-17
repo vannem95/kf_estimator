@@ -230,6 +230,40 @@ void QuadrupedEKF::update(const Eigen::VectorXd& sensor_z, const std::vector<boo
     mj_fwdPosition(m_ptr, d_ptr);
     mj_fwdVelocity(m_ptr, d_ptr);
 
+    // mj_fwdConstraint is necessary for sensor data computation
+    mj_fwdConstraint(m_ptr, d_ptr);     
+
+
+
+
+    // --- START DEBUGGING: PRINT FOOT VELOCITY SENSOR READINGS ---
+    
+    std::cout << "\n----------------- FOOT VELOCITY SENSORS (MEASUREMENTS) -----------------" << std::endl;
+    
+    // Assuming the order of your sensor indices matches the order of your feet (0 to 7)
+    // You should iterate through the sensor indices you stored during initialization
+    
+    for (int i = 0; i < NUM_FEET; ++i) {
+        // Get the starting address of the 3D velocity measurement (Vx, Vy, Vz)
+        int sensor_data_adr = foot_vel_sensor_indices[i];
+        
+        // Use Eigen::Map to access the data easily
+        Eigen::Map<const Vector3d> measured_foot_vel(
+            &d_ptr->sensordata[sensor_data_adr]
+        );
+
+        std::cout << "Foot " << i << " velocity [Vx, Vy, Vz]: " 
+                  << measured_foot_vel.transpose() 
+                  << std::endl;
+    }
+    std::cout << "------------------------------------------------------------------------" << std::endl;
+
+    // --- END DEBUGGING ---    
+
+
+
+
+
 
     // 2. Build dynamic measurement vector and Jacobian based on contact state
     const int NUM_FEET = 8;
@@ -322,6 +356,24 @@ EKFNode::EKFNode() : Node("ekf_estimator_node") {
 
 
     ekf_ = std::make_unique<QuadrupedEKF>(DT, m_ptr_, d_ptr_);
+
+
+    // --- NEW: Map Sensor Names to mjData Index ---
+    const int NUM_FEET = 8;
+    std::string sensor_names[NUM_FEET] = {
+        "tlf_wheel_vel", "tlr_wheel_vel", "trf_wheel_vel", "trr_wheel_vel",
+        "hlf_wheel_vel", "hlr_wheel_vel", "hrf_wheel_vel", "hrr_wheel_vel"
+    };
+
+    for (int i = 0; i < NUM_FEET; ++i) {
+        int sensor_id = mj_name2id(m_ptr_, mjOBJ_SENSOR, sensor_names[i].c_str());
+        if (sensor_id >= 0) {
+            ekf_->foot_vel_sensor_indices[i] = m_ptr_->sensor_adr[sensor_id];
+        } else {
+            RCLCPP_ERROR(this->get_logger(), "Sensor %s not found in XML!", sensor_names[i].c_str());
+        }
+    }    
+
 
     joint_state_sub_ = this->create_subscription<JointState>(
         "joint_states_in", 10,
@@ -502,7 +554,7 @@ void EKFNode::estimator_loop() {
         }
     }    
     
-    // ekf_->update(sensor_z_joints, contact_schedule_, m_ptr_, d_ptr_);
+    ekf_->update(sensor_z_joints, contact_schedule_, m_ptr_, d_ptr_);
 
 
     // Map the final, updated EKF state back to the MuJoCo data structure for visualization

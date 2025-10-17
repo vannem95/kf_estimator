@@ -138,65 +138,62 @@
     <!-- <general name="fr_wheel2_joint" joint="head_right_shin_rear_wheel_joint"/> -->
   </actuator>
 
-
   <sensor>
-      <site name="hlf_wheel_vel" site="hlf_wheel_site" type="velocimeter"/>
-      <site name="hlr_wheel_vel" site="hlr_wheel_site" type="velocimeter"/>
-      <site name="hrf_wheel_vel" site="hrf_wheel_site" type="velocimeter"/>
-      <site name="hrr_wheel_vel" site="hrr_wheel_site" type="velocimeter"/>
+      <velocimeter name="hlf_wheel_vel" site="hlf_wheel_site"/>
+      <velocimeter name="hlr_wheel_vel" site="hlr_wheel_site"/>
+      <velocimeter name="hrf_wheel_vel" site="hrf_wheel_site"/>
+      <velocimeter name="hrr_wheel_vel" site="hrr_wheel_site"/>
       
-      <site name="tlf_wheel_vel" site="tlf_wheel_site" type="velocimeter"/>
-      <site name="tlr_wheel_vel" site="tlr_wheel_site" type="velocimeter"/>
-      <site name="trf_wheel_vel" site="trf_wheel_site" type="velocimeter"/>
-      <site name="trr_wheel_vel" site="trr_wheel_site" type="velocimeter"/>
+      <velocimeter name="tlf_wheel_vel" site="tlf_wheel_site"/>
+      <velocimeter name="tlr_wheel_vel" site="tlr_wheel_site"/>
+      <velocimeter name="trf_wheel_vel" site="trf_wheel_site"/>
+      <velocimeter name="trr_wheel_vel" site="trr_wheel_site"/>
   </sensor>
 
-
-
-    <!-- key frame has 0,0 for wheel sites because the bodies have the positions fixed/initialized -->
-    <keyframe>
-      <key name="home"       
-        qpos="0 0 0.1675 1 0 0 0 
-              0 0 
-              0 0 
-              0 0 
-              0 0"
-        ctrl="0 0 
-              0 0 
-              0 0 
-              0 0"/>
-      <key name="flat"       
-        qpos='0 0 0.05 1 0 0 0 1.71253 -1.71287 1.71253 -1.71287 -1.71253 1.71287 -1.71253 1.71287'
-        ctrl="0 0 
-              0 0 
-              0 0 
-              0 0"/>
-      <key name="flat_up"       
-        qpos='0.0898423 -0.0025112 0.05 1 0 0 0 3.14 3.14 3.14 3.14 3.14 3.14 3.14 3.14'
-        ctrl="0 0 
-              0 0 
-              0 0 
-              0 0"/>
-      <key name="fortumbling"       
-        qpos="0 0 0.13 1 0 0 0 
-              1.5708 0 
-              1.5708 0
-              -1.5708 0
-              -1.5708 0"
-        ctrl="0 0 
-              0 0 
-              0 0 
-              0 0"/>
-      <key name="fortumbling2"       
-        qpos="0 0 0.13 1 0 0 0 
-              0.659736 -0.659736 
-              0.659736 -0.659736
-              -0.659736 0.659736
-              -0.659736 0.659736"
-        ctrl="0 0 
-              0 0 
-              0 0 
-              0 0"/>                                  
-    </keyframe>
-        <!-- qpos='0.0898423 -0.0025112 0.05 1 0 0 0 3.62333 -5.46591 3.62333 -5.46591 3.62333 -5.46591 3.62333 -5.46591 ' -->
+  <!-- key frame has 0,0 for wheel sites because the bodies have the positions fixed/initialized -->
+  <keyframe>
+    <key name="home"       
+      qpos="0 0 0.1675 1 0 0 0 
+            0 0 
+            0 0 
+            0 0 
+            0 0"
+      ctrl="0 0 
+            0 0 
+            0 0 
+            0 0"/>
+    <key name="flat"       
+      qpos='0 0 0.05 1 0 0 0 1.71253 -1.71287 1.71253 -1.71287 -1.71253 1.71287 -1.71253 1.71287'
+      ctrl="0 0 
+            0 0 
+            0 0 
+            0 0"/>
+    <key name="flat_up"       
+      qpos='0.0898423 -0.0025112 0.05 1 0 0 0 3.14 3.14 3.14 3.14 3.14 3.14 3.14 3.14'
+      ctrl="0 0 
+            0 0 
+            0 0 
+            0 0"/>
+    <key name="fortumbling"       
+      qpos="0 0 0.13 1 0 0 0 
+            1.5708 0 
+            1.5708 0
+            -1.5708 0
+            -1.5708 0"
+      ctrl="0 0 
+            0 0 
+            0 0 
+            0 0"/>
+    <key name="fortumbling2"       
+      qpos="0 0 0.13 1 0 0 0 
+            0.659736 -0.659736 
+            0.659736 -0.659736
+            -0.659736 0.659736
+            -0.659736 0.659736"
+      ctrl="0 0 
+            0 0 
+            0 0 
+            0 0"/>                                  
+  </keyframe>
+      <!-- qpos='0.0898423 -0.0025112 0.05 1 0 0 0 3.62333 -5.46591 3.62333 -5.46591 3.62333 -5.46591 3.62333 -5.46591 ' -->
 </mujoco>
