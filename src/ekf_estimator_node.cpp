@@ -71,6 +71,18 @@ void EKFNode::viewer_loop() {
 // ----------------------------- viewer -----------------------------
 
 
+// This function wraps the angle theta to the range (-PI, PI]
+double wrap_angle(double angle) {
+    double two_pi = 2.0 * M_PI;
+    // Standard formula: angle - 2*pi * floor((angle + pi) / (2*pi))
+    angle = std::fmod(angle + M_PI, two_pi);
+    if (angle < 0) {
+        angle += two_pi;
+    }
+    return angle - M_PI;
+}
+
+
 
 // --- QuadrupedEKF Class Implementations ---
 QuadrupedEKF::QuadrupedEKF(double dt, mjModel* model, mjData* data) :
@@ -467,15 +479,22 @@ void EKFNode::joint_state_callback(const sensor_msgs::msg::JointState::SharedPtr
             if (joint_to_qpos_index_map_.count(joint_name)) {
                 int qpos_index = joint_to_qpos_index_map_[joint_name];
                 
-                double pos_val = last_joint_data_.position[i] / 2.0;
+                // 1. Calculate and wrap joint position
+                double raw_pos_val = last_joint_data_.position[i] / 2.0;
+                
+                // CRITICAL FIX: Wrap the angle to [-PI, PI] for kinematic stability
+                double pos_val = wrap_angle(raw_pos_val); 
+                
+                // 2. Calculate joint velocity (velocity should NOT be wrapped)
                 double vel_val = last_joint_data_.velocity[i] / 2.0;
 
-                // Check if the current joint is in the set of reversed joints
+                // 3. Check if the current joint is in the set of reversed joints
                 if (reversed_joints.count(joint_name)) {
                     pos_val *= -1.0;
                     vel_val *= -1.0;
                 }
 
+                // 4. Map the corrected values
                 temp_pos_map[qpos_index] = pos_val;
                 temp_vel_map[qpos_index] = vel_val;
 
